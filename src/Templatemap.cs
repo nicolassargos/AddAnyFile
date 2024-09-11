@@ -44,8 +44,8 @@ namespace MadsKristensen.AddAnyFile
 
 			var templateFile = GetMatchingTemplateFromFileName(project, list, file);
 
-			var template = await ReplaceTokensAsync(project, safeName, relative, templateFile);
-			return NormalizeLineEndings(template);
+			var template = await FileHelpers.ReplaceTokensAsync(project, safeName, relative, templateFile);
+			return FileHelpers.NormalizeLineEndings(template);
 		}
 
 		private static void AddTemplatesFromCurrentFolder(List<string> list, string dir)
@@ -70,9 +70,9 @@ namespace MadsKristensen.AddAnyFile
 
 		private static string GetMatchingTemplateFromFileName(Project project, List<string> templateFilePaths, string file)
 		{
-			var extension = Path.GetExtension(file).ToLowerInvariant();
-			var name = Path.GetFileName(file);
-			var safeName = name.StartsWith(".") ? name : Path.GetFileNameWithoutExtension(file);
+			var extension = FileHelpers.GetExtension(file).ToLowerInvariant();
+			var name = FileHelpers.GetFileName(file);
+			var safeName = name.StartsWith(".") ? name : name; // Path.GetFileNameWithoutExtension(file);
 
 			// Look for direct file name matches
 			bool directFileMatchingPredicate(string path) => Path.GetFileName(path).Equals(name + _defaultExt, StringComparison.OrdinalIgnoreCase);
@@ -86,7 +86,8 @@ namespace MadsKristensen.AddAnyFile
 			bool conventionMatchingPredicate(string path) => (safeName + _defaultExt).EndsWith(Path.GetFileName(path), StringComparison.OrdinalIgnoreCase);
 			if (templateFilePaths.Any(conventionMatchingPredicate))
 			{
-				return templateFilePaths.FirstOrDefault(conventionMatchingPredicate);
+				var tmplFile = templateFilePaths.FirstOrDefault(conventionMatchingPredicate);
+				return tmplFile;
 			}
 
 			// Look for file extension matches
@@ -94,66 +95,11 @@ namespace MadsKristensen.AddAnyFile
 			if (templateFilePaths.Any(extensionMatchingPredicate))
 			{
 				var tmplFile = templateFilePaths.FirstOrDefault(extensionMatchingPredicate);
-				var tmpl = AdjustForSpecific(project, safeName, extension);
+				var tmpl = FileHelpers.AdjustForSpecific(project, safeName, extension);
 				return Path.Combine(Path.GetDirectoryName(tmplFile), tmpl + _defaultExt); //GetTemplate(tmpl);
 			}
 
 			return null;
-		}
-
-		private static async Task<string> ReplaceTokensAsync(Project project, string name, string relative, string templateFile)
-		{
-			if (string.IsNullOrEmpty(templateFile))
-			{
-				return templateFile;
-			}
-
-			var rootNs = project.GetRootNamespace();
-			var ns = string.IsNullOrEmpty(rootNs) ? "MyNamespace" : rootNs;
-
-			var mvcProjectControllerNs = project.GetMVCNamespace() ?? "";
-
-			if (!string.IsNullOrEmpty(relative))
-			{
-				ns += "." + ProjectHelpers.CleanNameSpace(relative);
-			}
-
-			using (var reader = new StreamReader(templateFile))
-			{
-				var content = await reader.ReadToEndAsync();
-
-				return content.Replace("{namespace}", ns)
-							  .Replace("{itemname}", name)
-							  .Replace("{mvcprojectnamespace}", mvcProjectControllerNs);
-			}
-		}
-
-		private static string NormalizeLineEndings(string content)
-		{
-			if (string.IsNullOrEmpty(content))
-			{
-				return content;
-			}
-
-			return Regex.Replace(content, @"\r\n|\n\r|\n|\r", "\r\n");
-		}
-
-		private static string AdjustForSpecific(Project project, string safeName, string extension)
-		{
-			if (Regex.IsMatch(safeName, "^I[A-Z].*"))
-			{
-				return extension += "-interface";
-			}
-			else if (Regex.IsMatch(safeName, @".+Enum$"))
-			{
-				return extension += "-enum";
-			}
-			else if (Regex.IsMatch(safeName, @".+Controller$") && project.IsMVCProject())
-			{
-				return extension += "-controller";
-			}
-
-			return extension;
 		}
 	}
 }

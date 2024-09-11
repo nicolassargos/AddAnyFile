@@ -7,6 +7,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -71,23 +72,45 @@ namespace MadsKristensen.AddAnyFile
 				return;
 			}
 
+			// Hack for Blazor components
+			var razorTestPasedString = input.Split('.');
+
+			// If Blazor component,
+			// then we want to create 3 files (.razor, .cs, .scss)
+			if (razorTestPasedString.Length == 2)
+			{
+				if (string.Equals(razorTestPasedString[1].ToLowerInvariant(), "blazor"))
+				{
+					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(cs, css)";
+				}
+				else if (string.Equals(razorTestPasedString[1].ToLowerInvariant(), "blazor"))
+				{
+					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(cs, scss)";
+				}
+			}
+
 			string[] parsedInputs = GetParsedInput(input);
 
 			foreach (string name in parsedInputs)
 			{
-				try
-				{
-					AddItemAsync(name, target).Forget();
-				}
-				catch (Exception ex) when (!ErrorHandler.IsCriticalException(ex))
-				{
-					Logger.Log(ex);
-					MessageBox.Show(
-							$"Error creating file '{name}':{Environment.NewLine}{ex.Message}",
-							Vsix.Name,
-							MessageBoxButton.OK,
-							MessageBoxImage.Error);
-				}
+				TryAddItemAsync(target, name);
+			}
+		}
+
+		private void TryAddItemAsync(NewItemTarget target, string name)
+		{
+			try
+			{
+				AddItemAsync(name, target).Forget();
+			}
+			catch (Exception ex) when (!ErrorHandler.IsCriticalException(ex))
+			{
+				Logger.Log(ex);
+				MessageBox.Show(
+						$"Error creating file '{name}':{Environment.NewLine}{ex.Message}",
+						Vsix.Name,
+						MessageBoxButton.OK,
+						MessageBoxImage.Error);
 			}
 		}
 
