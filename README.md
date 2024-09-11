@@ -14,6 +14,7 @@ selected folder or in the same folder as the selected file.
 - Create files starting with a dot like `.gitignore`
 - Create deeper folder structures easily if required
 - Create folders when the entered name ends with a /
+- **New:** Create a razor file with all subfiles (*.razor, *.razor.cs, *.razor.css) by using `MyComponent.blazor`, or for scss instead of css, use `MyComponent.blazors`
 
 ![Add new file dialog](art/dialog.png)
 
