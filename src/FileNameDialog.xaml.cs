@@ -15,7 +15,9 @@ namespace MadsKristensen.AddAnyFile
 			"Tip: You can create files without file extensions, like 'LICENSE'",
 			"Tip: Create folder by ending the name with a forward slash",
 			"Tip: Use glob style syntax to add related files, like 'widget.(html,js)'",
-			"Tip: Separate names with commas to add multiple files and folders"
+			"Tip: Separate names with commas to add multiple files and folders",
+			"Tip: Create a Blazor component with split template, css and code-behind files by using 'widget.blazor'",
+			"Tip: Scss files can be created instead of Css with blazor components by using extension 'blazors'"
 		};
 
 		public FileNameDialog(string folder)
