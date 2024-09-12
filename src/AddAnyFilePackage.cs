@@ -81,11 +81,11 @@ namespace MadsKristensen.AddAnyFile
 			{
 				if (string.Equals(razorTestPasedString[1].ToLowerInvariant(), "blazor"))
 				{
-					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(cs, css)";
+					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(css, cs)";
 				}
-				else if (string.Equals(razorTestPasedString[1].ToLowerInvariant(), "blazor"))
+				else if (string.Equals(razorTestPasedString[1].ToLowerInvariant(), "blazors"))
 				{
-					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(cs, scss)";
+					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(sccs, cs)";
 				}
 			}
 
