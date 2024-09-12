@@ -34,7 +34,7 @@ namespace MadsKristensen.AddAnyFile
 
 		public static DTE2 _dte;
 
-		protected override async System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+		protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
 		{
 			await JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -114,7 +114,7 @@ namespace MadsKristensen.AddAnyFile
 			}
 		}
 
-		private async System.Threading.Tasks.Task AddItemAsync(string name, NewItemTarget target)
+		private async Task AddItemAsync(string name, NewItemTarget target)
 		{
 			// The naming rules that apply to files created on disk also apply to virtual solution folders,
 			// so regardless of what type of item we are creating, we need to validate the name.
@@ -157,7 +157,7 @@ namespace MadsKristensen.AddAnyFile
 			} while (!string.IsNullOrEmpty(path));
 		}
 
-		private async System.Threading.Tasks.Task AddFileAsync(string name, NewItemTarget target)
+		private async Task AddFileAsync(string name, NewItemTarget target)
 		{
 			await JoinableTaskFactory.SwitchToMainThreadAsync();
 			FileInfo file;
@@ -253,7 +253,7 @@ namespace MadsKristensen.AddAnyFile
 			return 0;
 		}
 
-		private static async System.Threading.Tasks.Task WriteToDiskAsync(string file, string content)
+		private static async Task WriteToDiskAsync(string file, string content)
 		{
 			using (StreamWriter writer = new StreamWriter(file, false, GetFileEncoding(file)))
 			{
