@@ -85,7 +85,7 @@ namespace MadsKristensen.AddAnyFile
 				}
 				else if (string.Equals(razorTestPasedString[1].ToLowerInvariant(), "blazors"))
 				{
-					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(sccs, cs)";
+					input = $"{razorTestPasedString[0]}.razor, {razorTestPasedString[0]}.razor.(scss, cs)";
 				}
 			}
 
